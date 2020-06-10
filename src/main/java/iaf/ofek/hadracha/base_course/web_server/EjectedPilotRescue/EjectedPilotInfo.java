@@ -47,7 +47,6 @@ public class EjectedPilotInfo implements Entity<EjectedPilotInfo> {
     }
 
     private void airplaneArrived(Airplane airplane){
-
         allocatedAirplanes.stream()
                 .filter(allocatedAirplane -> allocatedAirplane.airplane.id == airplane.id)
                 .forEach(allocatedAirplane -> allocatedAirplane.arrivedAtDestination=true);
