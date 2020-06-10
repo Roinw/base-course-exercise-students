@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class EjectionsPilotInfoProvider implements EjectionInfoProvider {
+public class SimulativeEjectedPilotRescueProvider implements EjectedPilotRescueProvider {
 
     CrudDataBase dataBase;
 
-    public EjectionsPilotInfoProvider(@Autowired CrudDataBase dataBase) {
+    public SimulativeEjectedPilotRescueProvider(@Autowired CrudDataBase dataBase) {
         this.dataBase = dataBase;
     }
 

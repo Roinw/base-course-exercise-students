@@ -10,21 +10,23 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/ejectedPilotRescue")
-public class EjectedPilotRescueController {
-    EjectionInfoProvider ejectionProvider;
+public class EjectedPilotRescueRestController {
+    SimulativeEjectedPilotRescueProvider simulativeEjectedPilotRescueProvider;
 
-    public EjectedPilotRescueController(@Autowired EjectionInfoProvider ejectionProvider) {
-        this.ejectionProvider = ejectionProvider;
+    public EjectedPilotRescueRestController(@Autowired SimulativeEjectedPilotRescueProvider simulativeEjectedPilotRescueProvider) {
+        this.simulativeEjectedPilotRescueProvider = simulativeEjectedPilotRescueProvider;
     }
 
     @GetMapping("/infos")
     public List<EjectedPilotInfo> sendEjectionsInfo() {
-        return ejectionProvider.getEjections();
+        return simulativeEjectedPilotRescueProvider.getEjections();
     }
 
     @GetMapping("/takeResponsibility")
     public List<EjectedPilotInfo> takeResponsibility(int ejectionId, @CookieValue(value = "client-id", defaultValue = "") String clientId) {
-        this.ejectionProvider.setRescuer(ejectionId, clientId);
-        return ejectionProvider.getEjections();
+        this.simulativeEjectedPilotRescueProvider.setRescuer(ejectionId, clientId);
+        // TODO: Send closest aircraft to EjectedPilot
+
+        return simulativeEjectedPilotRescueProvider.getEjections();
     }
 }
