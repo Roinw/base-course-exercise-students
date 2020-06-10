@@ -24,8 +24,8 @@ public class EjectedPilotRescueRestController {
 
     @GetMapping("/takeResponsibility")
     public List<EjectedPilotInfo> takeResponsibility(int ejectionId, @CookieValue(value = "client-id", defaultValue = "") String clientId) {
-        this.simulativeEjectedPilotRescueProvider.setRescuer(ejectionId, clientId);
-        // TODO: Send closest aircraft to EjectedPilot
+        this.simulativeEjectedPilotRescueProvider.allocateAirplanesForRescue(ejectionId, clientId);
+        this.simulativeEjectedPilotRescueProvider.chooseClientInCharge(ejectionId, clientId);
 
         return simulativeEjectedPilotRescueProvider.getEjections();
     }

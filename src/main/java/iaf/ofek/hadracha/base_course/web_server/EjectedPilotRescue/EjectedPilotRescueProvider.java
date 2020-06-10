@@ -5,5 +5,7 @@ import java.util.List;
 public interface EjectedPilotRescueProvider {
         List<EjectedPilotInfo> getEjections();
 
-        void setRescuer(int ejectionId, String clientId);
+        void chooseClientInCharge(int ejectionId, String clientId);
+
+        void allocateAirplanesForRescue(int ejectionId, String rescuerId);
 }
