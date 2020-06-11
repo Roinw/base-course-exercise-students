@@ -71,13 +71,13 @@ public class EjectionsImporter {
         List<EjectedPilotInfo> updatedEjections = shiftLatitudeToNorth(getEjectionFromServer());
         List<EjectedPilotInfo> previousEjections = dataBase.getAllOfType(EjectedPilotInfo.class);
 
-        List<EjectedPilotInfo> addedEjections = subtractEjection(updatedEjections, previousEjections);
-        List<EjectedPilotInfo> removedEjections = subtractEjection(previousEjections, updatedEjections);
+        List<EjectedPilotInfo> addedEjections = subtractEjections(updatedEjections, previousEjections);
+        List<EjectedPilotInfo> removedEjections = subtractEjections(previousEjections, updatedEjections);
 
         updateDataBase(addedEjections, removedEjections);
     }
 
-    private List<EjectedPilotInfo> subtractEjection(List<EjectedPilotInfo> firstEjections, List<EjectedPilotInfo> secondEjections) {
+    private List<EjectedPilotInfo> subtractEjections(List<EjectedPilotInfo> firstEjections, List<EjectedPilotInfo> secondEjections) {
         return listOperations.subtract(firstEjections, secondEjections, new Entity.ByIdEqualizer<>());
     }
 }
