@@ -20,20 +20,28 @@ public class SimulativeAirSituationProvider implements AirSituationProvider {
 
     private static final double CHANCE_FOR_NUMBER_CHANGE = 0.005;
     private static final double CHANCE_FOR_AZIMUTH_CHANGE = 0.05;
-    private static int STEP_SIZE = 15;
-    private static int SIMULATION_INTERVAL_MILLIS = 100;
-    private double LAT_MIN = 29.000;
-    private double LAT_MAX = 36.000;
-    private double LON_MIN = 32.000;
-    private double LON_MAX = 46.500;
+    private static final int STEP_SIZE = 15;
+    private static final int SIMULATION_INTERVAL_MILLIS = 100;
+    private static final double LAT_MIN = 29.000;
+    private static final double LAT_MAX = 36.000;
+    private static final double LON_MIN = 32.000;
+    private static final double LON_MAX = 46.500;
     private static final double AZIMUTH_STEP = STEP_SIZE / (2000.0 / SIMULATION_INTERVAL_MILLIS);
-
+    private static final int AIRPLANE_MAX = 80;
+    private static final int AIRPLANE_MIN = 0;
+    private static final int VELOCITY_MIN = 40;
+    private static final int VELOCITY_MAX = 70;
+    public static final int MAX_DISTANCE = 500;
+    private static final int ZERO_DEGREES = 0;
+    private static final int FULL_CIRCLE_DEGREES = 360;
+    private static final int HALF_CIRCLE_DEGREES = 180;
+    private static final int QUARTER_CIRCLE_DEGREES = 90;
 
     // Scheduler to run advancement task repeatedly
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     // Object that acts as a lock for the updates
-    private final Object lock = new Object();
-    private final Random random = new Random();
+    private static final Object lock = new Object();
+    private static final Random random = new Random();
     private final RandomGenerators randomGenerators;
     private final GeographicCalculations geographicCalculations;
 
@@ -46,7 +54,7 @@ public class SimulativeAirSituationProvider implements AirSituationProvider {
         this.randomGenerators = randomGenerators;
         this.geographicCalculations = geographicCalculations;
 
-        for (int i = 0; i < 80; i++) {
+        for (int i = AIRPLANE_MIN; i < AIRPLANE_MAX; i++) {
             addAirPlane();
         }
 
@@ -61,8 +69,8 @@ public class SimulativeAirSituationProvider implements AirSituationProvider {
         Airplane airplane = new Airplane(kind, lastId++);
         airplane.coordinates = new Coordinates(randomGenerators.generateRandomDoubleInRange(LAT_MIN, LAT_MAX),
                 randomGenerators.generateRandomDoubleInRangeWithNormalDistribution(LON_MIN, LON_MAX));
-        airplane.setAzimuth(randomGenerators.generateRandomDoubleInRange(0, 360));
-        airplane.velocity = randomGenerators.generateRandomDoubleInRange(40, 70) * airplane.getAirplaneKind().getVelocityFactor();
+        airplane.setAzimuth(randomGenerators.generateRandomDoubleInRange(ZERO_DEGREES, FULL_CIRCLE_DEGREES));
+        airplane.velocity = randomGenerators.generateRandomDoubleInRange(VELOCITY_MIN, VELOCITY_MAX) * airplane.getAirplaneKind().getVelocityFactor();
         airplanes.add(airplane);
     }
 
@@ -86,7 +94,7 @@ public class SimulativeAirSituationProvider implements AirSituationProvider {
                     airplane.coordinates.lon += Math.cos(worldAzimuthToEuclidRadians(airplane.getAzimuth())) * airplane.velocity / 100000;
                     if (airplane.coordinates.lat < LAT_MIN || airplane.coordinates.lat > LAT_MAX ||
                             airplane.coordinates.lon < LON_MIN || airplane.coordinates.lon > LON_MAX)
-                        airplane.setAzimuth(airplane.getAzimuth() + 180);
+                        airplane.setAzimuth(airplane.getAzimuth() + HALF_CIRCLE_DEGREES);
                 });
 
                 if (random.nextDouble() < CHANCE_FOR_NUMBER_CHANGE) { // chance to add an airplane
@@ -110,9 +118,9 @@ public class SimulativeAirSituationProvider implements AirSituationProvider {
             }
 
             double azimuthToDestenation = geographicCalculations.azimuthBetween(currLocation, headingTo);
-            double differnceOfAzimuth = 180-geographicCalculations.normalizeAzimuth(azimuthToDestenation - airplane.getAzimuth());
+            double differnceOfAzimuth = HALF_CIRCLE_DEGREES - geographicCalculations.normalizeAzimuth(azimuthToDestenation - airplane.getAzimuth());
 
-            return (differnceOfAzimuth > 0 ? Math.min(AZIMUTH_STEP*10, differnceOfAzimuth/5) : Math.max(-AZIMUTH_STEP*10, differnceOfAzimuth/5))/2;
+            return (differnceOfAzimuth > ZERO_DEGREES ? Math.min(AZIMUTH_STEP * 10, differnceOfAzimuth / 5) : Math.max(-AZIMUTH_STEP * 10, differnceOfAzimuth / 5)) / 2;
 
         }
         else {
@@ -120,13 +128,13 @@ public class SimulativeAirSituationProvider implements AirSituationProvider {
                 if (random.nextDouble() < CHANCE_FOR_AZIMUTH_CHANGE)   // chance for big change
                     return randomGenerators.generateRandomDoubleInRange(-AZIMUTH_STEP, AZIMUTH_STEP);
                 else   // small gradual change, with a 66% chance that the size of the acceleration will be reduced
-                    return randomGenerators.generateRandomDoubleInRange(0, 1.5 * airplane.radialAcceleration);
+                    return randomGenerators.generateRandomDoubleInRange(ZERO_DEGREES, 1.5 * airplane.radialAcceleration);
             return airplane.radialAcceleration;
         }
     }
 
     private boolean arrivedToDestination(Coordinates currLocation, Coordinates headingTo) {
-        return geographicCalculations.distanceBetween(currLocation, headingTo) < 500;
+        return geographicCalculations.distanceBetween(currLocation, headingTo) < MAX_DISTANCE;
     }
 
     /**
@@ -134,8 +142,8 @@ public class SimulativeAirSituationProvider implements AirSituationProvider {
      * radians in which 0 is right and increases counter clockwise.
      */
     private double worldAzimuthToEuclidRadians(double azimuth) {
-        double inEuclidDegrees = -azimuth + 90;
-        return inEuclidDegrees * Math.PI / 180;
+        double inEuclidDegrees = -azimuth + QUARTER_CIRCLE_DEGREES;
+        return inEuclidDegrees * Math.PI / HALF_CIRCLE_DEGREES;
     }
 
     @Override
