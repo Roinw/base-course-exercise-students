@@ -1,32 +1,32 @@
 package iaf.ofek.hadracha.base_course.web_server.EjectedPilotRescue;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/ejectedPilotRescue")
 public class EjectedPilotRescueRestController {
-    SimulativeEjectedPilotRescueProvider simulativeEjectedPilotRescueProvider;
 
-    public EjectedPilotRescueRestController(@Autowired SimulativeEjectedPilotRescueProvider simulativeEjectedPilotRescueProvider) {
-        this.simulativeEjectedPilotRescueProvider = simulativeEjectedPilotRescueProvider;
+    EjectedPilotRescueProvider ejectedPilotRescueProvider;
+
+    public EjectedPilotRescueRestController(@Autowired EjectedPilotRescueProvider ejectedPilotRescueProvider) {
+        this.ejectedPilotRescueProvider = ejectedPilotRescueProvider;
     }
 
     @GetMapping("/infos")
     public List<EjectedPilotInfo> sendEjectionsInfo() {
-        return simulativeEjectedPilotRescueProvider.getEjections();
+        return ejectedPilotRescueProvider.getEjections();
     }
 
     @GetMapping("/takeResponsibility")
-    public List<EjectedPilotInfo> takeResponsibility(int ejectionId, @CookieValue(value = "client-id", defaultValue = "") String clientId) {
-        this.simulativeEjectedPilotRescueProvider.allocateAirplanesForRescue(ejectionId, clientId);
-        this.simulativeEjectedPilotRescueProvider.chooseClientInCharge(ejectionId, clientId);
+    public List<EjectedPilotInfo> takeResponsibility(
+            @RequestParam("ejectionId") int ejectionId,
+            @CookieValue(value = "client-id", defaultValue = "") String clientId) {
+        this.ejectedPilotRescueProvider.allocateAirplanesForRescue(ejectionId, clientId);
+        this.ejectedPilotRescueProvider.chooseClientInCharge(ejectionId, clientId);
 
-        return simulativeEjectedPilotRescueProvider.getEjections();
+        return ejectedPilotRescueProvider.getEjections();
     }
 }

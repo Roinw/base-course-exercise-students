@@ -1,8 +1,8 @@
 package iaf.ofek.hadracha.base_course.web_server.AirSituation;
 
+import iaf.ofek.hadracha.base_course.web_server.Data.Coordinates;
 import iaf.ofek.hadracha.base_course.web_server.Utilities.GeographicCalculations;
 import iaf.ofek.hadracha.base_course.web_server.Utilities.RandomGenerators;
-import iaf.ofek.hadracha.base_course.web_server.Data.Coordinates;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class SimulativeAirSituationProvider implements AirSituationProvider {
         this.geographicCalculations = geographicCalculations;
 
         for (int i = 0; i < 80; i++) {
-            foo();
+            addAirPlane();
         }
 
         executor.scheduleAtFixedRate(this::UpdateSituation, 0, SIMULATION_INTERVAL_MILLIS, TimeUnit.MILLISECONDS);
@@ -56,13 +56,13 @@ public class SimulativeAirSituationProvider implements AirSituationProvider {
     // all airplane kinds that can be used
     private List<AirplaneKind> airplaneKinds = AirplaneKind.LeafKinds();
 
-    private void foo() {
+    private void addAirPlane() {
         AirplaneKind kind = airplaneKinds.get(random.nextInt(airplaneKinds.size()));
         Airplane airplane = new Airplane(kind, lastId++);
-        airplane.coordinates=new Coordinates(randomGenerators.generateRandomDoubleInRange(LAT_MIN, LAT_MAX),
+        airplane.coordinates = new Coordinates(randomGenerators.generateRandomDoubleInRange(LAT_MIN, LAT_MAX),
                 randomGenerators.generateRandomDoubleInRangeWithNormalDistribution(LON_MIN, LON_MAX));
-        airplane.setAzimuth(randomGenerators.generateRandomDoubleInRange(0,360));
-        airplane.velocity = randomGenerators.generateRandomDoubleInRange(40, 70)*airplane.getAirplaneKind().getVelocityFactor();
+        airplane.setAzimuth(randomGenerators.generateRandomDoubleInRange(0, 360));
+        airplane.velocity = randomGenerators.generateRandomDoubleInRange(40, 70) * airplane.getAirplaneKind().getVelocityFactor();
         airplanes.add(airplane);
     }
 
@@ -90,7 +90,7 @@ public class SimulativeAirSituationProvider implements AirSituationProvider {
                 });
 
                 if (random.nextDouble() < CHANCE_FOR_NUMBER_CHANGE) { // chance to add an airplane
-                    foo();
+                    addAirPlane();
                 }
             }
         }

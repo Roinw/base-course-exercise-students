@@ -25,7 +25,6 @@ public class EjectionsImporter {
     @Value("${ejections.namespace}")
     public String NAMESPACE;
 
-
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private final RestTemplate restTemplate;
     private final CrudDataBase dataBase;
@@ -37,7 +36,6 @@ public class EjectionsImporter {
         this.dataBase = dataBase;
         this.listOperations = listOperations;
         executor.scheduleAtFixedRate(this::updateEjections, 1, 1, TimeUnit.SECONDS);
-
     }
 
     private void updateEjections() {

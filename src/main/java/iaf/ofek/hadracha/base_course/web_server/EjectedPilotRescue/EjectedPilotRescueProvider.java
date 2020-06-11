@@ -1,11 +1,39 @@
 package iaf.ofek.hadracha.base_course.web_server.EjectedPilotRescue;
 
+import iaf.ofek.hadracha.base_course.web_server.Data.CrudDataBase;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
-public interface EjectedPilotRescueProvider {
-        List<EjectedPilotInfo> getEjections();
+@Service
+public class EjectedPilotRescueProvider {
 
-        void chooseClientInCharge(int ejectionId, String clientId);
+    AirplanesAllocationManager airplanesAllocationManager;
+    CrudDataBase dataBase;
 
-        void allocateAirplanesForRescue(int ejectionId, String rescuerId);
+    public EjectedPilotRescueProvider(@Autowired AirplanesAllocationManager airplanesAllocationManager,
+                                      @Autowired CrudDataBase dataBase) {
+        this.airplanesAllocationManager = airplanesAllocationManager;
+        this.dataBase = dataBase;
+    }
+
+    public List<EjectedPilotInfo> getEjections() {
+        return dataBase.getAllOfType(EjectedPilotInfo.class);
+    }
+
+    public void chooseClientInCharge(int ejectionId, String clientId) {
+        EjectedPilotInfo ejectedPilotInfo = dataBase.getByID(ejectionId, EjectedPilotInfo.class);
+        if (ejectedPilotInfo.rescuedBy == null) {
+            ejectedPilotInfo.rescuedBy = clientId;
+            dataBase.update(ejectedPilotInfo);
+        }
+    }
+
+    public void allocateAirplanesForRescue(int ejectionId, String rescuerId) {
+        EjectedPilotInfo ejectedPilotInfo = dataBase.getByID(ejectionId, EjectedPilotInfo.class);
+        if (ejectedPilotInfo.rescuedBy == null) {
+            airplanesAllocationManager.allocateAirplanesForEjection(ejectedPilotInfo, rescuerId);
+        }
+    }
 }

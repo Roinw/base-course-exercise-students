@@ -2,12 +2,7 @@ package iaf.ofek.hadracha.base_course.web_server.AirSituation;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,7 +40,7 @@ public enum AirplaneKind{
     }
 
     /**
-     * @return true iff this kind is a descendant of the given kind (=the given kind is an ancestor of this).
+     * @return true if this kind is a descendant of the given kind (=the given kind is an ancestor of this).
      * For example - F15 is a descendant of Krav, and Saraf is a descendant of both Helicopter and Maskar.
      */
     public boolean isDescendantOf(AirplaneKind kind) {
