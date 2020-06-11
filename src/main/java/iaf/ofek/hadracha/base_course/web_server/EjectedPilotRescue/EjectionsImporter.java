@@ -44,7 +44,6 @@ public class EjectionsImporter {
                     EJECTION_SERVER_URL + "/ejections?name=" + NAMESPACE, HttpMethod.GET,
                     null, new ParameterizedTypeReference<List<EjectedPilotInfo>>() {
                     });
-
             return responseEntity.getBody();
         } catch (RestClientException e) {
             System.err.println("Could not get ejections: " + e.getMessage());
@@ -72,17 +71,13 @@ public class EjectionsImporter {
         List<EjectedPilotInfo> updatedEjections = shiftLatitudeToNorth(getEjectionFromServer());
         List<EjectedPilotInfo> previousEjections = dataBase.getAllOfType(EjectedPilotInfo.class);
 
-        List<EjectedPilotInfo> addedEjections = ejectionsToAdd(updatedEjections, previousEjections);
-        List<EjectedPilotInfo> removedEjections = ejectionsToRemove(updatedEjections, previousEjections);
+        List<EjectedPilotInfo> addedEjections = subtractEjection(updatedEjections, previousEjections);
+        List<EjectedPilotInfo> removedEjections = subtractEjection(previousEjections, updatedEjections);
 
         updateDataBase(addedEjections, removedEjections);
     }
 
-    private List<EjectedPilotInfo> ejectionsToRemove(List<EjectedPilotInfo> updatedEjections, List<EjectedPilotInfo> previousEjections) {
-        return listOperations.subtract(previousEjections, updatedEjections, new Entity.ByIdEqualizer<>());
-    }
-
-    private List<EjectedPilotInfo> ejectionsToAdd(List<EjectedPilotInfo> updatedEjections, List<EjectedPilotInfo> previousEjections) {
-        return listOperations.subtract(updatedEjections, previousEjections, new Entity.ByIdEqualizer<>());
+    private List<EjectedPilotInfo> subtractEjection(List<EjectedPilotInfo> firstEjections, List<EjectedPilotInfo> secondEjections) {
+        return listOperations.subtract(firstEjections, secondEjections, new Entity.ByIdEqualizer<>());
     }
 }
