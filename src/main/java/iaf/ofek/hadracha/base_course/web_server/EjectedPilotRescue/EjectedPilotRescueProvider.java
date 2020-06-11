@@ -24,15 +24,15 @@ public class EjectedPilotRescueProvider {
 
     public void chooseClientInCharge(int ejectionId, String clientId) {
         EjectedPilotInfo ejectedPilotInfo = dataBase.getByID(ejectionId, EjectedPilotInfo.class);
-        if (ejectedPilotInfo.rescuedBy == null) {
-            ejectedPilotInfo.rescuedBy = clientId;
+        if (ejectedPilotInfo.getRescuedBy() == null) {
+            ejectedPilotInfo.setRescuedBy(clientId);
             dataBase.update(ejectedPilotInfo);
         }
     }
 
     public void allocateAirplanesForRescue(int ejectionId, String rescuerId) {
         EjectedPilotInfo ejectedPilotInfo = dataBase.getByID(ejectionId, EjectedPilotInfo.class);
-        if (ejectedPilotInfo.rescuedBy == null) {
+        if (ejectedPilotInfo.getRescuedBy() == null) {
             airplanesAllocationManager.allocateAirplanesForEjection(ejectedPilotInfo, rescuerId);
         }
     }

@@ -8,17 +8,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EjectedPilotInfo implements Entity<EjectedPilotInfo> {
-    private int id;
+
     private List<AllocatedAirplane> allocatedAirplanes = new ArrayList<>();
+    private Coordinates coordinates;
+    private String pilotName;
+    private int id;
 
-    public Coordinates coordinates;
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
 
-    public String pilotName;
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public String getPilotName() {
+        return pilotName;
+    }
+
+    public void setPilotName(String pilotName) {
+        this.pilotName = pilotName;
+    }
+
+    public String getRescuedBy() {
+        return rescuedBy;
+    }
+
+    public void setRescuedBy(String rescuedBy) {
+        this.rescuedBy = rescuedBy;
+    }
 
     /**
      * The rescue manager's client id, or null if non.
      */
-    public String rescuedBy;
+    private String rescuedBy;
 
     @Override
     public int getId() {
@@ -39,24 +62,24 @@ public class EjectedPilotInfo implements Entity<EjectedPilotInfo> {
         }
     }
 
-    public void allocateAirplane(Airplane airplane, String controllerClientId){
+    public void allocateAirplane(Airplane airplane, String controllerClientId) {
         AllocatedAirplane allocatedAirplane = new AllocatedAirplane(airplane);
         allocatedAirplanes.add(allocatedAirplane);
         airplane.flyTo(coordinates, controllerClientId);
         airplane.onArrivedAtDestination(this::airplaneArrived);
     }
 
-    private void airplaneArrived(Airplane airplane){
+    private void airplaneArrived(Airplane airplane) {
         allocatedAirplanes.stream()
                 .filter(allocatedAirplane -> allocatedAirplane.airplane.id == airplane.id)
-                .forEach(allocatedAirplane -> allocatedAirplane.arrivedAtDestination=true);
+                .forEach(allocatedAirplane -> allocatedAirplane.arrivedAtDestination = true);
 
-        if (allocatedAirplanes.stream().allMatch(allocatedAirplane -> allocatedAirplane.arrivedAtDestination)){
+        if (allocatedAirplanes.stream().allMatch(allocatedAirplane -> allocatedAirplane.arrivedAtDestination)) {
             allocatedAirplanes.forEach(allocatedAirplane -> allocatedAirplane.airplane.unAllocate());
         }
     }
 
-    private class AllocatedAirplane{
+    private class AllocatedAirplane {
         Airplane airplane;
         boolean arrivedAtDestination;
 
