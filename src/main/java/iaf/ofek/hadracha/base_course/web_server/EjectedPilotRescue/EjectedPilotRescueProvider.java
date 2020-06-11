@@ -1,7 +1,6 @@
 package iaf.ofek.hadracha.base_course.web_server.EjectedPilotRescue;
 
 import iaf.ofek.hadracha.base_course.web_server.Data.CrudDataBase;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,8 +11,8 @@ public class EjectedPilotRescueProvider {
     AirplanesAllocationManager airplanesAllocationManager;
     CrudDataBase dataBase;
 
-    public EjectedPilotRescueProvider(@Autowired AirplanesAllocationManager airplanesAllocationManager,
-                                      @Autowired CrudDataBase dataBase) {
+    public EjectedPilotRescueProvider(AirplanesAllocationManager airplanesAllocationManager,
+                                      CrudDataBase dataBase) {
         this.airplanesAllocationManager = airplanesAllocationManager;
         this.dataBase = dataBase;
     }

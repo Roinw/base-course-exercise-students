@@ -27,11 +27,11 @@ public class SimulativeAirSituationProvider implements AirSituationProvider {
     private static final double LON_MIN = 32.000;
     private static final double LON_MAX = 46.500;
     private static final double AZIMUTH_STEP = STEP_SIZE / (2000.0 / SIMULATION_INTERVAL_MILLIS);
-    private static final int AIRPLANE_MAX = 80;
-    private static final int AIRPLANE_MIN = 0;
+    private static final int AIRPLANE_AMOUNT_MAX = 80;
+    private static final int AIRPLANE_AMOUNT_MIN = 0;
     private static final int VELOCITY_MIN = 40;
     private static final int VELOCITY_MAX = 70;
-    public static final int MAX_DISTANCE = 500;
+    private static final int MAX_ARRIVE_DISTANCE = 500;
     private static final int ZERO_DEGREES = 0;
     private static final int FULL_CIRCLE_DEGREES = 360;
     private static final int HALF_CIRCLE_DEGREES = 180;
@@ -54,7 +54,7 @@ public class SimulativeAirSituationProvider implements AirSituationProvider {
         this.randomGenerators = randomGenerators;
         this.geographicCalculations = geographicCalculations;
 
-        for (int i = AIRPLANE_MIN; i < AIRPLANE_MAX; i++) {
+        for (int i = AIRPLANE_AMOUNT_MIN; i < AIRPLANE_AMOUNT_MAX; i++) {
             addAirplane();
         }
 
@@ -134,7 +134,7 @@ public class SimulativeAirSituationProvider implements AirSituationProvider {
     }
 
     private boolean arrivedToDestination(Coordinates currLocation, Coordinates headingTo) {
-        return geographicCalculations.distanceBetween(currLocation, headingTo) < MAX_DISTANCE;
+        return geographicCalculations.distanceBetween(currLocation, headingTo) < MAX_ARRIVE_DISTANCE;
     }
 
     /**

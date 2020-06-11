@@ -1,6 +1,5 @@
 package iaf.ofek.hadracha.base_course.web_server.EjectedPilotRescue;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,7 +10,7 @@ public class EjectedPilotRescueRestController {
 
     EjectedPilotRescueProvider ejectedPilotRescueProvider;
 
-    public EjectedPilotRescueRestController(@Autowired EjectedPilotRescueProvider ejectedPilotRescueProvider) {
+    public EjectedPilotRescueRestController(EjectedPilotRescueProvider ejectedPilotRescueProvider) {
         this.ejectedPilotRescueProvider = ejectedPilotRescueProvider;
     }
 
